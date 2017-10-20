@@ -8,7 +8,7 @@ import sys
 import hashlib
 import shutil
 
-from .classes.Sampler import *
+from classes.Sampler import *
 
 argv = sys.argv[1:]
 
@@ -48,12 +48,17 @@ train_set = []
 
 hashes = []
 for path in paths:
-    with open("{}/{}.gui".format(input_path, path), 'r') as f:
+    if sys.version_info >= (3,):
+        f = open("{}/{}.gui".format(input_path, path), 'r', encoding='utf-8')
+    else:
+        f = open("{}/{}.gui".format(input_path, path), 'r')
+
+    with f:
         chars = ""
         for line in f:
             chars += line
         content_hash = chars.replace(" ", "").replace("\n", "")
-        content_hash = hashlib.sha256(content_hash).hexdigest()
+        content_hash = hashlib.sha256(content_hash.encode('utf-8')).hexdigest()
 
         if len(eval_set) == evaluation_samples_number:
             train_set.append(path)
